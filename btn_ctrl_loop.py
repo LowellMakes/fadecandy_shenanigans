@@ -4,12 +4,17 @@ import opc
 import time
 from picamera.array import PiRGBArray
 from picamera import PiCamera
+import RPi.GPIO as GPIO
 import os
 import sys
 import signal
 
 pid = str(os.getpid())
 pidfile = "/var/run/fc_loop.pid"
+# Set Gpio pin to pin14, first pin next to GND. It's also TX, hopefuly that's not a problem.
+gpioPin = 14
+start = time.time()
+
 
 if os.path.isfile(pidfile):
     print "%s already exists, exiting" % pidfile
@@ -23,8 +28,22 @@ def on_exit(sig, func=None):
     print "exit handler triggered"
     sys.exit(1)
 
+def check_button():
+    global seconds
+    btn = not GPIO.input(gpioPin)
+    if btn:
+        start = time.time()
+        if mode == "animation":
+            mode = "video"
+        else:
+            mode = "animation"
+    return btn
+
 if __name__ == '__main__':
     set_exit_handler(on_exit)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(gpioPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    mode = "animation"
     client = opc.Client('localhost:7890')
     mario_paths = ['/home/pi/fadecandy_shenanigans/mario_images/mario2.jpg',
              '/home/pi/fadecandy_shenanigans/mario_images/mario3.jpg',
@@ -134,21 +153,29 @@ if __name__ == '__main__':
 #            rawCapture.truncate(0)
     start = time.time()
     while True:
-        seconds = time.time()-start
-        if seconds<10:
-            for image in marios:
-                client.put_pixels(image)
-                client.put_pixels(image)
-                time.sleep(0.11)
-        elif seconds<20:
-            for image in pacmans:
-                client.put_pixels(image)
-        elif seconds<30:
-            for image in texts:
-                client.put_pixels(image)
-                time.sleep(0.15)
+        if mode == "animation":
+            seconds = time.time()-start
+            if seconds<10:
+                for image in marios:
+                    client.put_pixels(image)
+                    client.put_pixels(image)
+                    if check_button():
+                        break;
+                    time.sleep(0.11)
+            elif seconds<20:
+                for image in pacmans:
+                    client.put_pixels(image)
+                    if check_button():
+                        break;
+            elif seconds<30:
+                for image in texts:
+                    client.put_pixels(image)
+                    if check_button():
+                        break;
+                    time.sleep(0.15)
+            else:
+                start = time.time()
         else:
-            #start = time.time()
             for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
                 img = frame.array
                 img = cv2.flip(img,1)
@@ -156,7 +183,6 @@ if __name__ == '__main__':
                 client.put_pixels(array)
                 client.put_pixels(array)
                 rawCapture.truncate(0)
-                if (time.time()-start)>60:
-                    start = time.time()
+                if check_button():
                     break
 
