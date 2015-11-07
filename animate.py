@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from fc_lib import *
 import opc
 import time
