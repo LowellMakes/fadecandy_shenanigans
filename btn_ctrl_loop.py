@@ -29,9 +29,11 @@ def on_exit(sig, func=None):
     sys.exit(1)
 
 def check_button():
-    global seconds
+    global start
+    global mode
     btn = not GPIO.input(gpioPin)
     if btn:
+        time.sleep(0.5)
         start = time.time()
         if mode == "animation":
             mode = "video"
