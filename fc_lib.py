@@ -28,13 +28,13 @@ def read_image_to_array(path):
     return opencv_image_to_array(im)
 
 def opencv_image_to_array(im):
+    #fix color, opencv uses bgr, we want rgb
+    rgb = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
     #resize image to our display size
-    out = cv2.resize(im, (32,25)).tolist()
+    out = cv2.resize(rgb, (32,25)).tolist()
     #flatten image to a 1d array
     flat =  [item for sublist in out for item in sublist]
-    #fix color, opencv uses bgr, we want rgb
-    array = [(item[2], item[1], item[0]) for item in flat]
     #map the image array to our display, which has alternating rows
-    array = fix_array(array)
+    array = fix_array(flat)
     return array
 
