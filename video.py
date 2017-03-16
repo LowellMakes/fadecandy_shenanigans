@@ -1,10 +1,30 @@
 from fc_lib import *
+import os
 import opc
 import time
+import signal
+import sys
+
+pid = str(os.getpid())
+pidfile = "/var/run/video.pid"
+
+if os.path.isfile(pidfile):
+    print "%s already exists, exiting" % pidfile
+    sys.exit()
+else:
+    file(pidfile, 'w').write(pid)
+
+def set_exit_handler(func):
+    signal.signal(signal.SIGTERM, func)
+def on_exit(sig, func=None):
+    print "exit handler triggered"
+    sys.exit(1)
+
 
 if __name__ == '__main__':
-    client = opc.Client('10.1.10.157:7890')
-    cap = cv2.VideoCapture('bbb.mp4')
+    set_exit_handler(on_exit)
+    client = opc.Client('localhost:7890')
+    cap = cv2.VideoCapture('/home/pi/fadecandy_shenanigans/bbb.mp4')
     while True:
             ret, img = cap.read()
             #print s

@@ -1,0 +1,92 @@
+#!/usr/bin/python
+from fc_lib import *
+import os
+import sys
+import opc
+import time
+import cv2
+import signal
+
+pid = str(os.getpid())
+pidfile = "/var/run/lowellmakes.pid"
+
+if os.path.isfile(pidfile):
+    print "%s already exists, exiting" % pidfile
+    sys.exit()
+else:
+    file(pidfile, 'w').write(pid)
+
+def set_exit_handler(func):
+    signal.signal(signal.SIGTERM, func)
+def on_exit(sig, func=None):
+    print "exit handler triggered"
+    sys.exit(1)
+
+
+if __name__ == '__main__':
+    set_exit_handler(on_exit)
+    client = opc.Client('localhost:7890')
+    
+    paths = ['/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv005-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv010-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv015-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv020-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv025-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv030-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv035-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv040-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv045-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv050-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv055-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv060-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv065-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv070-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv075-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv080-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv085-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv090-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv095-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv100-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv105-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv110-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv115-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv120-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv125-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv130-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv135-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv140-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv145-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv150-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv155-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv160-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv165-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv170-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv175-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv180-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv185-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv190-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv195-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv200-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv205-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv210-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv215-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv220-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv225-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv230-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv235-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv240-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv245-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv525-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv530-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv535-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv540-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv545-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv550-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv550-invert.jpg',
+	     '/home/pi/fadecandy_shenanigans/lowellmakes_images/lmsv550-invert.jpg']
+    images = [opencv_image_to_array(cv2.imread(path)) for path in paths]
+    while True:
+        for image in images:
+            client.put_pixels(image)
+            time.sleep(0.15)
+	

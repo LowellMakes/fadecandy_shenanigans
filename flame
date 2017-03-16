@@ -1,0 +1,86 @@
+#!/usr/bin/python
+from fc_lib import *
+import signal
+import os
+import opc
+import sys
+import time
+#import cv2
+
+pid = str(os.getpid())
+pidfile = "/var/run/flame.pid"
+
+if os.path.isfile(pidfile):
+    print "%s already exists, exiting" % pidfile
+    sys.exit()
+else:
+    file(pidfile, 'w').write(pid)
+
+def set_exit_handler(func):
+    signal.signal(signal.SIGTERM, func)
+def on_exit(sig, func=None):
+    print "exit handler triggered"
+    sys.exit(1)
+
+
+if __name__ == '__main__':
+    set_exit_handler(on_exit)
+    client = opc.Client('localhost:7890')
+    
+    paths = ['/home/pi/fadecandy_shenanigans/flame_images/flame-0.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-1.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-2.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-3.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-4.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-5.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-6.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-7.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-8.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-9.jpg',
+	     '/home/pi/fadecandy_shenanigans/flame_images/flame-10.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-11.jpg',
+	     '/home/pi/fadecandy_shenanigans/flame_images/flame-12.jpg',
+	     '/home/pi/fadecandy_shenanigans/flame_images/flame-13.jpg',
+	     '/home/pi/fadecandy_shenanigans/flame_images/flame-14.jpg',
+	     '/home/pi/fadecandy_shenanigans/flame_images/flame-15.jpg',
+	     '/home/pi/fadecandy_shenanigans/flame_images/flame-16.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-17.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-18.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-19.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-20.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-21.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-22.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-23.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-24.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-25.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-26.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-27.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-28.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-29.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-30.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-31.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-32.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-33.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-34.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-35.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-36.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-37.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-38.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-39.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-40.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-41.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-42.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-43.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-44.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-45.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-46.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-47.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-48.jpg',
+             '/home/pi/fadecandy_shenanigans/flame_images/flame-49.jpg',]
+    images = [read_image_to_array(path) for path in paths]
+    images = images
+    while True:
+        for image in images:
+            client.put_pixels(image)
+            client.put_pixels(image)
+            time.sleep(0.01)

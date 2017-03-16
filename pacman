@@ -1,0 +1,59 @@
+#!/usr/bin/python
+from fc_lib import *
+import signal
+import os
+import opc
+import sys
+import time
+
+pid = str(os.getpid())
+pidfile = "/var/run/pacman.pid"
+
+if os.path.isfile(pidfile):
+    print "%s already exists, exiting" % pidfile
+    sys.exit()
+else:
+    file(pidfile, 'w').write(pid)
+
+def set_exit_handler(func):
+    signal.signal(signal.SIGTERM, func)
+def on_exit(sig, func=None):
+    print "exit handler triggered"
+    sys.exit(1)
+
+if __name__ == '__main__':
+    set_exit_handler(on_exit)
+    client = opc.Client('localhost:7890')
+    
+    paths = ['/home/pi/fadecandy_shenanigans/pacman_images/pacman_0_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_1_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_2_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_3_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_4_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_5_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_6_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_7_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_8_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_9_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_10_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_11_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_12_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_13_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_14_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_15_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_16_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_17_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_18_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_19_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_20_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_21_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_22_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_23_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_24_resize.jpg',
+	'/home/pi/fadecandy_shenanigans/pacman_images/pacman_25_resize.jpg']
+    images = [opencv_image_to_array(cv2.imread(path)) for path in paths]
+#    images = images + images[::-1]
+    while True:
+        for image in images:
+            client.put_pixels(image)
+  #          time.sleep(0.0005)
