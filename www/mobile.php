@@ -51,16 +51,10 @@
   }
 ?>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1" /> 
 </head>
-<script type="text/javascript">
-<!--
-if (screen.width <= 699) {
-document.location = "mobile.php";
-}
-//-->
-</script>
 <center>
-<table border=1>
+<table border=1 style="height:100%;width:100%; position: absolute; top: 0; bottom: 0; left: 0; right: 0;">
 <tr>
 <td><a href='index.php?picamstart=true'><image style="display:block;" width="100%" height="100%" src=picam.png></image></a></td>
 <td><a href='index.php?mariostart=true'><image style="display:block;" width="100%" height="100%" src=mario2.jpg></image></a></td>
