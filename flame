@@ -5,7 +5,6 @@ import os
 import opc
 import sys
 import time
-#import cv2
 
 pid = str(os.getpid())
 pidfile = "/var/run/flame.pid"
