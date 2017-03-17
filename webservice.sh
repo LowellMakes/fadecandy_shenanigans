@@ -1,7 +1,7 @@
 #!/bin/bash
 
 name=$1
-services="mario piday flame pacman lowellmakes picam video"
+services="mario piday flame pacman lowellmakes picam video mariovideo"
 
 killservice(){
  pidfile="/var/run/$1.pid"
@@ -20,4 +20,6 @@ for i in $services
 			killservice $i	
 		fi
 done
-service $name start
+if [ "$name" != none ] ; then
+ service $name start &
+fi
